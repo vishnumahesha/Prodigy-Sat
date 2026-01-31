@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#101425"/>
+  <text x="80" y="80" fill="#f4f5ff" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">
+    SpellSAT Subscription Plans
+  </text>
+  <text x="80" y="120" fill="#cdd1ff" font-family="Arial, Helvetica, sans-serif" font-size="20">
+    (Mockup for demo purposes)
+  </text>
+
+  <g>
+    <rect x="80" y="180" width="320" height="420" rx="18" fill="#171b31" stroke="#2d3356" stroke-width="2"/>
+    <text x="120" y="230" fill="#f4f5ff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Starter</text>
+    <text x="120" y="270" fill="#7cf9a2" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">$0</text>
+    <text x="120" y="310" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Basic practice</text>
+    <text x="120" y="340" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Limited AI hints</text>
+    <text x="120" y="370" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Core domains</text>
+    <rect x="120" y="510" width="200" height="50" rx="12" fill="#2b3152"/>
+    <text x="162" y="542" fill="#cdd1ff" font-family="Arial, Helvetica, sans-serif" font-size="18">Current Plan</text>
+  </g>
+
+  <g>
+    <rect x="440" y="160" width="320" height="440" rx="18" fill="#1b2140" stroke="#6b72ff" stroke-width="3"/>
+    <text x="480" y="220" fill="#f4f5ff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Pro</text>
+    <text x="480" y="260" fill="#7cf9a2" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">$9/mo</text>
+    <text x="480" y="300" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Full SAT practice</text>
+    <text x="480" y="330" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• AI helper unlimited</text>
+    <text x="480" y="360" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Progress analytics</text>
+    <rect x="480" y="520" width="200" height="50" rx="12" fill="#6b72ff"/>
+    <text x="530" y="552" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="18">Most Popular</text>
+  </g>
+
+  <g>
+    <rect x="800" y="180" width="320" height="420" rx="18" fill="#171b31" stroke="#2d3356" stroke-width="2"/>
+    <text x="840" y="230" fill="#f4f5ff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Team</text>
+    <text x="840" y="270" fill="#7cf9a2" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">$29/mo</text>
+    <text x="840" y="310" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Classroom tools</text>
+    <text x="840" y="340" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Coach dashboard</text>
+    <text x="840" y="370" fill="#aab0d4" font-family="Arial, Helvetica, sans-serif" font-size="18">• Shared progress</text>
+    <rect x="840" y="510" width="200" height="50" rx="12" fill="#2b3152"/>
+    <text x="900" y="542" fill="#cdd1ff" font-family="Arial, Helvetica, sans-serif" font-size="18">Contact Us</text>
+  </g>
+</svg>

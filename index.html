@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SpellSAT Battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="space-sky" aria-hidden="true">
+      <div class="stars stars-1"></div>
+      <div class="stars stars-2"></div>
+      <div class="planet planet-1"></div>
+      <div class="planet planet-2"></div>
+      <div class="planet planet-3"></div>
+      <div class="celestial-city"></div>
+    </div>
+    <main class="container">
+      <header class="topbar">
+        <div class="logo">SpellSAT</div>
+        <div class="top-actions">
+          <button id="startBtn" class="primary">Start Battle</button>
+          <button id="aiToggleBtn" class="ghost">AI Helper</button>
+          <a href="subscription.html" class="ghost">Plans</a>
+          <button id="copyLinkBtn" class="ghost hidden">Copy Challenge Link</button>
+          <div class="auth">
+            <span id="userLabel" class="muted">Guest</span>
+            <button id="signInBtn" class="ghost">Sign In</button>
+            <button id="signUpBtn" class="ghost">Sign Up</button>
+            <button id="signOutBtn" class="ghost hidden">Sign Out</button>
+          </div>
+        </div>
+      </header>
+
+      <section id="landing" class="landing">
+        <div class="hero">
+          <h1>Prove your skills in SAT Math + English</h1>
+          <p>Answer questions to cast spells, level up, and defeat the enemy.</p>
+          <div class="hero-cta">
+            <button id="startBtnHero" class="primary">Play Now</button>
+            <span class="muted">No signup required</span>
+          </div>
+        </div>
+        <div class="features">
+          <div class="feature-card">Battle-based SAT practice</div>
+          <div class="feature-card">XP + Level progression</div>
+          <div class="feature-card">AI helper (coming next)</div>
+        </div>
+        <div class="domain-section">
+          <h2>Domains & Subdomains</h2>
+          <div id="domainList" class="domain-list"></div>
+        </div>
+      </section>
+
+      <section id="gameView" class="hidden">
+        <nav class="tab-bar" aria-label="Game tabs">
+          <button class="tab-btn active" data-tab="battleTab" type="button">Battle</button>
+          <button class="tab-btn" data-tab="optionsTab" type="button">Options</button>
+        </nav>
+
+        <section id="battleTab" class="tab-panel">
+          <section class="practice-panel">
+            <div class="practice-row">
+              <div class="practice-group">
+                <label for="subjectSelect">Section</label>
+                <select id="subjectSelect"></select>
+              </div>
+              <div class="practice-group">
+                <label for="domainSelect">Domain</label>
+                <select id="domainSelect"></select>
+              </div>
+              <div class="practice-group">
+                <label for="subdomainSelect">Subdomain</label>
+                <select id="subdomainSelect"></select>
+              </div>
+              <div class="practice-group">
+                <label for="battleModeSelect">Battle Mode</label>
+                <select id="battleModeSelect">
+                  <option value="bot">AI Bot</option>
+                  <option value="dragon">Dragon</option>
+                  <option value="friend">Friend</option>
+                </select>
+              </div>
+              <button id="startRoundBtn" class="primary">Start Round</button>
+            </div>
+            <div id="selectionStats" class="selection-stats"></div>
+          </section>
+
+          <section class="battle" id="battleArena">
+        <div class="fighter">
+          <div class="label">You</div>
+          <div class="avatar" id="playerAvatar">
+            <div class="avatar-hair"></div>
+            <div class="avatar-face"></div>
+            <div class="avatar-eyes"></div>
+            <div class="avatar-mouth"></div>
+            <div class="avatar-accessory"></div>
+            <div class="avatar-body"></div>
+          </div>
+          <div class="pet-display">
+            <div class="pet" id="playerPet"></div>
+            <span id="playerPetName">Owl</span>
+          </div>
+          <div class="hp-bar">
+            <div id="playerHPFill" class="hp-fill"></div>
+          </div>
+          <div id="playerHPText" class="hp-text">HP 100</div>
+        </div>
+
+        <div class="vs">VS</div>
+        <div class="sword-slash" id="swordSlash"></div>
+
+        <div class="fighter">
+          <div class="label" id="enemyLabel">Enemy</div>
+          <div class="enemy-visuals">
+            <div class="enemy-icon" id="enemyIcon">🤖</div>
+            <div class="dragon hidden" id="dragon">
+              <div class="dragon-body"></div>
+              <div class="dragon-wing left"></div>
+              <div class="dragon-wing right"></div>
+              <div class="dragon-head"></div>
+              <div class="dragon-fire" id="dragonFire"></div>
+            </div>
+          </div>
+          <div class="hp-bar">
+            <div id="enemyHPFill" class="hp-fill"></div>
+          </div>
+          <div id="enemyHPText" class="hp-text">HP 100</div>
+        </div>
+      </section>
+
+        <section class="status">
+          <div>Level: <span id="levelText">1</span></div>
+          <div>XP: <span id="xpText">0</span>/50</div>
+          <div>Spell: <span id="spellText">Spark</span></div>
+          <div>Time: <span id="timeText">0:00</span></div>
+          <div>Streak: <span id="streakText">0</span> days</div>
+          <div>Consistency: <span id="consistencyText">0</span> days</div>
+        </section>
+
+        <section class="question-card">
+          <div id="questionText" class="question">Loading...</div>
+          <div id="answers" class="answers"></div>
+        </section>
+
+        <section id="aiPanel" class="ai-helper floating hidden">
+          <div id="aiDragHandle" class="ai-header">
+            <div class="ai-title">AI Helper</div>
+            <div class="ai-header-actions">
+              <div class="ai-badge">SAT-only • Demo mode</div>
+              <button id="aiCloseBtn" class="ghost">Close</button>
+            </div>
+          </div>
+          <p class="muted">Ask for a hint or explanation for the current question.</p>
+          <textarea id="aiInput" rows="3" placeholder="Example: Give me a hint for this question"></textarea>
+          <div class="ai-actions">
+            <button id="aiHintBtn" class="ghost">Hint</button>
+            <button id="aiExplainBtn" class="primary">Explain</button>
+          </div>
+          <div id="aiResponse" class="ai-response"></div>
+        </section>
+
+        <section id="message" class="message"></section>
+
+        <section id="endScreen" class="end-screen hidden">
+          <h2 id="endTitle">You Win 🎉</h2>
+          <p id="endStats"></p>
+          <button id="playAgainBtn" class="primary">Play Again</button>
+        </section>
+        </section>
+
+        <section id="optionsTab" class="tab-panel hidden">
+          <section class="avatar-panel">
+          <h3>Your Character</h3>
+          <div class="avatar-customizer">
+            <div class="avatar-preview">
+              <div class="avatar" id="avatarPreview">
+                <div class="avatar-hair"></div>
+                <div class="avatar-face"></div>
+                <div class="avatar-eyes"></div>
+                <div class="avatar-mouth"></div>
+                <div class="avatar-accessory"></div>
+                <div class="avatar-body"></div>
+              </div>
+              <div class="pet-preview">
+                <div class="pet" id="petPreview"></div>
+                <span id="petPreviewName">Owl</span>
+              </div>
+            </div>
+            <div class="avatar-controls">
+              <label for="genderSelect">Gender</label>
+              <select id="genderSelect">
+                <option value="neutral">Neutral</option>
+                <option value="boy">Boy</option>
+                <option value="girl">Girl</option>
+              </select>
+
+              <label for="skinColor">Skin</label>
+              <input id="skinColor" type="color" value="#f2c9a0" />
+
+              <label for="hairColor">Hair</label>
+              <input id="hairColor" type="color" value="#3b2f2f" />
+
+              <label for="outfitColor">Outfit</label>
+              <input id="outfitColor" type="color" value="#8a7bff" />
+
+              <label for="accessorySelect">Accessory</label>
+              <select id="accessorySelect">
+                <option value="none">None</option>
+                <option value="hat">Hat</option>
+                <option value="glasses">Glasses</option>
+                <option value="crown">Crown</option>
+              </select>
+
+              <label for="petSelect">Pet</label>
+              <select id="petSelect">
+                <option value="owl">Owl</option>
+                <option value="cat">Cat</option>
+                <option value="dog">Dog</option>
+                <option value="dragon">Dragon</option>
+                <option value="fox">Fox</option>
+                <option value="turtle">Turtle</option>
+              </select>
+
+              <label for="petColor">Pet Color</label>
+              <input id="petColor" type="color" value="#7cf9a2" />
+
+              <label for="friendIconSelect">Friend Icon</label>
+              <select id="friendIconSelect">
+                <option value="wizard">Wizard</option>
+                <option value="knight">Knight</option>
+                <option value="archer">Archer</option>
+                <option value="alien">Alien</option>
+                <option value="robot">Robot</option>
+                <option value="cat">Cat</option>
+              </select>
+            </div>
+          </div>
+          </section>
+
+          <section class="progress-panel">
+            <h3>Progress Tracker</h3>
+            <div id="progressList"></div>
+          </section>
+        </section>
+
+        <div id="levelUpPopup" class="levelup hidden">LEVEL UP!</div>
+        <canvas id="confettiCanvas"></canvas>
+      </section>
+
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
