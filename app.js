@@ -215,6 +215,12 @@ let level = 1;
 let xp = 0;
 let questionIndex = 0;
 let correctCount = 0;
+let isResolving = false;
+let lastPlayerHP = 100;
+let lastEnemyHP = 100;
+let soundOn = true;
+let audioCtx = null;
+let lastGameSummary = null;
 
 let questions = [];
 let startTime = null;
@@ -275,6 +281,7 @@ const endScreen = document.getElementById("endScreen");
 const endTitle = document.getElementById("endTitle");
 const endStats = document.getElementById("endStats");
 const playAgainBtn = document.getElementById("playAgainBtn");
+const copyResultsBtn = document.getElementById("copyResultsBtn");
 const levelUpPopup = document.getElementById("levelUpPopup");
 
 const copyLinkBtn = document.getElementById("copyLinkBtn");
@@ -296,6 +303,7 @@ const battleModeSelect = document.getElementById("battleModeSelect");
 const startRoundBtn = document.getElementById("startRoundBtn");
 const selectionStats = document.getElementById("selectionStats");
 const progressList = document.getElementById("progressList");
+const achievementsList = document.getElementById("achievementsList");
 const playerAvatar = document.getElementById("playerAvatar");
 const avatarPreview = document.getElementById("avatarPreview");
 const genderSelect = document.getElementById("genderSelect");
@@ -324,11 +332,136 @@ const aiExplainBtn = document.getElementById("aiExplainBtn");
 const aiResponse = document.getElementById("aiResponse");
 const aiPanel = document.getElementById("aiPanel");
 const aiToggleBtn = document.getElementById("aiToggleBtn");
+const soundToggleBtn = document.getElementById("soundToggleBtn");
 const aiCloseBtn = document.getElementById("aiCloseBtn");
 const aiDragHandle = document.getElementById("aiDragHandle");
+const battleModeLabel = document.getElementById("battleModeLabel");
 
 // --- Helpers ---
 function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+function enterBattleUI() {
+  document.body.classList.add("in-battle");
+  if (battleModeSelect) battleModeSelect.disabled = true;
+  if (friendIconSelect) friendIconSelect.disabled = true;
+  updateBattleModeLabel();
+  // Force battle tab (prevents seeing options during combat)
+  try { setActiveTab("battleTab"); } catch {}
+}
+
+function exitBattleUI() {
+  document.body.classList.remove("in-battle");
+  if (battleModeSelect) battleModeSelect.disabled = false;
+  applyBattleMode();
+}
+
+function flashScreen() {
+  document.body.classList.add("flash");
+  setTimeout(() => document.body.classList.remove("flash"), 120);
+}
+
+function updateBattleModeLabel() {
+  if (!battleModeLabel) return;
+  const label = battleMode === "dragon" ? "Dragon" : battleMode === "friend" ? "Friend" : "Bot";
+  battleModeLabel.textContent = `Fighting: ${label}`;
+}
+
+function flashHPBar(el, type) {
+  if (!el) return;
+  const className = type === "heal" ? "hp-heal" : "hp-hit";
+  el.classList.remove("hp-heal", "hp-hit");
+  el.classList.add(className);
+  setTimeout(() => el.classList.remove(className), 150);
+}
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return null;
+    audioCtx = new AudioContext();
+  }
+  return audioCtx;
+}
+
+async function playSound(type) {
+  if (!soundOn) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  if (ctx.state === "suspended") {
+    try { await ctx.resume(); } catch { return; }
+  }
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  if (type === "fire") osc.type = "sawtooth";
+  else if (type === "level") osc.type = "triangle";
+  else osc.type = "square";
+
+  const now = ctx.currentTime;
+  const freq = type === "fire" ? 140 : type === "level" ? 520 : 260;
+  osc.frequency.setValueAtTime(freq, now);
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+  osc.start(now);
+  osc.stop(now + 0.2);
+}
+
+function buildChallengeLink() {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.get("seed")) {
+    const seed = Math.floor(Math.random() * 999999).toString();
+    url.searchParams.set("seed", seed);
+  }
+  url.searchParams.set("mode", battleMode);
+  if (battleMode === "friend") {
+    url.searchParams.set("friend", friendIcon);
+  } else {
+    url.searchParams.delete("friend");
+  }
+  return url.toString();
+}
+
+function spawnProjectile(type = "spark") {
+  const layer = document.getElementById("vfxLayer");
+  const arena = document.getElementById("battleArena");
+  if (!layer || !arena || !playerAvatar) return;
+
+  const p = document.createElement("div");
+  p.className = `projectile ${type}`;
+
+  const layerRect = layer.getBoundingClientRect();
+  const startRect = playerAvatar.getBoundingClientRect();
+  const targetEl = (enemyIcon && !enemyIcon.classList.contains("hidden")) ? enemyIcon : dragon;
+  const targetRect = targetEl ? targetEl.getBoundingClientRect() : null;
+
+  if (targetRect) {
+    const startX = startRect.left + startRect.width / 2 - layerRect.left;
+    const startY = startRect.top + startRect.height / 2 - layerRect.top;
+    const endX = targetRect.left + targetRect.width / 2 - layerRect.left;
+    const endY = targetRect.top + targetRect.height / 2 - layerRect.top;
+    p.style.left = `${startX}px`;
+    p.style.top = `${startY}px`;
+    p.style.setProperty("--dx", `${endX - startX}px`);
+    p.style.setProperty("--dy", `${endY - startY}px`);
+  } else {
+    // Fallback for safety.
+    p.style.left = "26%";
+    p.style.top = "46%";
+    p.style.setProperty("--dx", "42vw");
+    p.style.setProperty("--dy", "-4vh");
+  }
+
+  layer.appendChild(p);
+
+  // animate
+  requestAnimationFrame(() => p.classList.add("fly"));
+  setTimeout(() => p.remove(), 450);
+}
 
 function updateBars() {
   playerHP = clamp(playerHP, 0, 100);
@@ -338,6 +471,15 @@ function updateBars() {
   enemyHPFill.style.width = `${enemyHP}%`;
   playerHPText.textContent = `HP ${playerHP}`;
   enemyHPText.textContent = `HP ${enemyHP}`;
+
+  if (playerHP !== lastPlayerHP) {
+    flashHPBar(playerHPFill, playerHP < lastPlayerHP ? "hit" : "heal");
+    lastPlayerHP = playerHP;
+  }
+  if (enemyHP !== lastEnemyHP) {
+    flashHPBar(enemyHPFill, enemyHP < lastEnemyHP ? "hit" : "heal");
+    lastEnemyHP = enemyHP;
+  }
 }
 
 function updateStatus() {
@@ -346,6 +488,7 @@ function updateStatus() {
   if (spellText) spellText.textContent = SPELLS[Math.min(level - 1, SPELLS.length - 1)];
   if (streakText) streakText.textContent = streakCount;
   if (consistencyText) consistencyText.textContent = totalDaysPlayed;
+  renderAchievements();
 }
 
 function applyAvatarToElement(el) {
@@ -414,9 +557,13 @@ function applyBattleMode() {
   if (enemyIcon) enemyIcon.classList.toggle("hidden", battleMode === "dragon");
   if (dragon) dragon.classList.toggle("hidden", battleMode !== "dragon");
   updateEnemyIcon();
+  updateBattleModeLabel();
 }
 
 function setActiveTab(tabId) {
+  if (document.body.classList.contains("in-battle") && tabId !== "battleTab") {
+    tabId = "battleTab";
+  }
   tabPanels.forEach(panel => panel.classList.toggle("hidden", panel.id !== tabId));
   tabButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tabId));
 }
@@ -436,6 +583,7 @@ function showMessage(text, type) {
 function showLevelUp() {
   if (!levelUpPopup) return;
   levelUpPopup.classList.remove("hidden");
+  playSound("level");
   setTimeout(() => levelUpPopup.classList.add("hidden"), 900);
 }
 
@@ -642,8 +790,13 @@ function loadProgress() {
 }
 
 function endGame(result) {
+  exitBattleUI();
   clearInterval(timerInterval);
   const timeTaken = formatTime((Date.now() - startTime) / 1000);
+  lastGameSummary = {
+    score: `${correctCount}/${questions.length}`,
+    time: timeTaken
+  };
   if (endTitle) endTitle.textContent = result === "win" ? "You Win 🎉" : "You Lose 😭";
   if (endStats) endStats.textContent = `Score: ${correctCount}/${questions.length} • Time: ${timeTaken}`;
   if (endScreen) endScreen.classList.remove("hidden");
@@ -736,18 +889,37 @@ function renderQuestion() {
 }
 
 function handleAnswer(idx) {
+  if (isResolving) return;
   const q = questions[questionIndex % questions.length];
   if (!q) return;
+  isResolving = true;
+  setTimeout(() => { isResolving = false; }, 450);
   recordProgress(q, idx === q.answer);
   if (idx === q.answer) {
     enemyHP -= 20;
     xp += 10;
     correctCount++;
     showMessage("⚡ Attack!", "attack");
-    if (battleMode === "dragon" && battleArena) {
+    // ALWAYS show sword slash + projectile + flash
+    if (battleArena) {
       battleArena.classList.add("sword-attack");
-      setTimeout(() => battleArena.classList.remove("sword-attack"), 500);
+      setTimeout(() => battleArena.classList.remove("sword-attack"), 420);
     }
+
+    // Spell-based projectile
+    const spell = SPELLS[Math.min(level - 1, SPELLS.length - 1)];
+    if (spell === "Fireball") {
+      spawnProjectile("fireball");
+      playSound("fire");
+    } else if (spell === "Ice Beam") {
+      spawnProjectile("ice");
+      playSound("slash");
+    } else {
+      spawnProjectile("spark");
+      playSound("slash");
+    }
+
+    flashScreen();
     if (xp >= 50) {
       level += 1;
       xp = xp - 50;
@@ -761,13 +933,29 @@ function handleAnswer(idx) {
     if (battleMode === "dragon" && dragon) {
       dragon.classList.add("fire");
       setTimeout(() => dragon.classList.remove("fire"), 600);
+      playSound("fire");
     }
     const battle = document.querySelector(".battle");
     if (battle) {
       battle.classList.add("shake");
       setTimeout(() => battle.classList.remove("shake"), 250);
     }
+    flashScreen();
   }
+
+  // Enemy counter-hit to create rhythm
+  setTimeout(() => {
+    if (playerHP <= 0 || enemyHP <= 0) return;
+    playerHP -= 5;
+    const playerFighter = battleArena?.querySelector(".fighter");
+    if (playerFighter) {
+      playerFighter.classList.add("shake");
+      setTimeout(() => playerFighter.classList.remove("shake"), 250);
+    }
+    updateBars();
+    updateStatus();
+  }, 250);
+
   updateBars();
   updateStatus();
   updateSelectionStats();
@@ -832,27 +1020,44 @@ function enterGame() {
 
 // --- Copy link ---
 copyLinkBtn?.addEventListener("click", async () => {
-  const url = new URL(window.location.href);
-  if (!url.searchParams.get("seed")) {
-    const seed = Math.floor(Math.random() * 999999).toString();
-    url.searchParams.set("seed", seed);
-  }
-  url.searchParams.set("mode", battleMode);
-  if (battleMode === "friend") {
-    url.searchParams.set("friend", friendIcon);
-  } else {
-    url.searchParams.delete("friend");
-  }
+  const url = buildChallengeLink();
   try {
-    await navigator.clipboard.writeText(url.toString());
+    await navigator.clipboard.writeText(url);
     showMessage("Challenge link copied!", "attack");
   } catch {
     showMessage("Copy failed — try manually.", "ouch");
   }
 });
 
+copyResultsBtn?.addEventListener("click", async () => {
+  const link = buildChallengeLink();
+  const summary = lastGameSummary
+    ? `I went ${lastGameSummary.score} in ${lastGameSummary.time} on SpellSAT. Beat me: ${link}`
+    : `Beat me: ${link}`;
+  try {
+    await navigator.clipboard.writeText(summary);
+    showMessage("Results copied!", "attack");
+  } catch {
+    showMessage("Copy failed — try manually.", "ouch");
+  }
+});
+
+soundToggleBtn?.addEventListener("click", async () => {
+  soundOn = !soundOn;
+  if (soundOn) {
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === "suspended") {
+      try { await ctx.resume(); } catch {}
+    }
+  }
+  if (soundToggleBtn) {
+    soundToggleBtn.textContent = `Sound: ${soundOn ? "On" : "Off"}`;
+  }
+});
+
 // --- Restart ---
 playAgainBtn?.addEventListener("click", () => {
+  enterBattleUI();
   resetRound();
   startGame();
 });
@@ -885,6 +1090,7 @@ tabButtons.forEach(btn => {
   });
 });
 startRoundBtn?.addEventListener("click", () => {
+  enterBattleUI();
   resetRound();
   startGame();
 });
@@ -953,12 +1159,18 @@ function setupDomainList() {
   if (!domainList) return;
   domainList.innerHTML = "";
   DOMAINS.forEach(subject => {
+    const group = document.createElement("details");
+    group.className = "subject-group";
+    const summary = document.createElement("summary");
+    summary.textContent = subject.name;
+    group.appendChild(summary);
+
     subject.domains.forEach(domain => {
       const card = document.createElement("div");
       card.className = "domain-card";
       const title = document.createElement("div");
       title.className = "domain-title";
-      title.textContent = `${subject.name}: ${domain.name} (${domain.weight})`;
+      title.textContent = `${domain.name} (${domain.weight})`;
       const subList = document.createElement("div");
       subList.className = "subdomain-list";
       domain.subdomains.forEach(sub => {
@@ -969,8 +1181,10 @@ function setupDomainList() {
       });
       card.appendChild(title);
       card.appendChild(subList);
-      domainList.appendChild(card);
+      group.appendChild(card);
     });
+
+    domainList.appendChild(group);
   });
 }
 
@@ -1109,11 +1323,68 @@ function renderProgress() {
   });
 }
 
+function getOverallProgressStats() {
+  let attempts = 0;
+  let correct = 0;
+  Object.values(progress).forEach(stats => {
+    attempts += stats.attempts || 0;
+    correct += stats.correct || 0;
+  });
+  const accuracy = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
+  return { attempts, correct, accuracy };
+}
+
+function renderAchievements() {
+  if (!achievementsList) return;
+  const totals = getOverallProgressStats();
+  const achievements = [
+    { title: "First Hit", desc: "Get 1 correct answer", earned: totals.correct >= 1 },
+    { title: "Getting Warm", desc: "Answer 10 questions", earned: totals.attempts >= 10 },
+    { title: "Sharpshooter", desc: "70% accuracy (10+ attempts)", earned: totals.attempts >= 10 && totals.accuracy >= 70 },
+    { title: "Level Up", desc: "Reach level 3", earned: level >= 3 },
+    { title: "Streak Starter", desc: "3-day streak", earned: streakCount >= 3 },
+    { title: "Dedicated Learner", desc: "Play 5 different days", earned: totalDaysPlayed >= 5 }
+  ];
+
+  achievementsList.innerHTML = "";
+  achievements.forEach(item => {
+    const row = document.createElement("div");
+    row.className = `achievement${item.earned ? "" : " locked"}`;
+    const text = document.createElement("div");
+    const title = document.createElement("div");
+    title.className = "title";
+    title.textContent = item.title;
+    const desc = document.createElement("div");
+    desc.className = "desc";
+    desc.textContent = item.desc;
+    text.appendChild(title);
+    text.appendChild(desc);
+    const badge = document.createElement("div");
+    badge.className = "badge";
+    badge.textContent = item.earned ? "Unlocked" : "Locked";
+    row.appendChild(text);
+    row.appendChild(badge);
+    achievementsList.appendChild(row);
+  });
+}
+
+function getCorrectAnswerText(question) {
+  if (!question || !Array.isArray(question.choices)) return "Answer not available.";
+  const answerIndex = question.answer;
+  const label = String.fromCharCode(65 + answerIndex);
+  const choice = question.choices[answerIndex];
+  return `Answer: ${label}) ${choice}`;
+}
+
 function buildAiResponse(question, mode, userText) {
   if (!question) return "Pick a question first, then ask for a hint.";
-  const base = generateLocalHint(question, mode);
-  if (!userText) return base;
-  return `${base} (Your note: "${userText}")`;
+  const note = userText ? ` (Your note: "${userText}")` : "";
+  if (mode === "hint") {
+    return `${generateLocalHint(question, "hint")}${note}`;
+  }
+  const answerLine = getCorrectAnswerText(question);
+  const explanation = generateLocalHint(question, "explain");
+  return `${answerLine}\n${explanation}${note}`;
 }
 
 function generateLocalHint(question, mode) {

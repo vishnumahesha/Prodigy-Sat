@@ -13,9 +13,25 @@
     <div class="space-sky" aria-hidden="true">
       <div class="stars stars-1"></div>
       <div class="stars stars-2"></div>
+      <div class="stars stars-3"></div>
       <div class="planet planet-1"></div>
       <div class="planet planet-2"></div>
       <div class="planet planet-3"></div>
+      <div class="planet planet-4"></div>
+      <div class="nebula nebula-1"></div>
+      <div class="nebula nebula-2"></div>
+      <div class="shooting-star shooting-1"></div>
+      <div class="shooting-star shooting-2"></div>
+      <div class="shooting-star shooting-3"></div>
+      <div class="comet comet-1"></div>
+      <div class="comet comet-2"></div>
+      <div class="asteroid asteroid-1"></div>
+      <div class="asteroid asteroid-2"></div>
+      <div class="asteroid asteroid-3"></div>
+      <div class="ufo ufo-1"></div>
+      <div class="ufo ufo-2"></div>
+      <div class="spaceship ship-1"></div>
+      <div class="spaceship ship-2"></div>
       <div class="celestial-city"></div>
     </div>
     <main class="container">
@@ -24,6 +40,7 @@
         <div class="top-actions">
           <button id="startBtn" class="primary">Start Battle</button>
           <button id="aiToggleBtn" class="ghost">AI Helper</button>
+          <button id="soundToggleBtn" class="ghost">Sound: On</button>
           <a href="subscription.html" class="ghost">Plans</a>
           <button id="copyLinkBtn" class="ghost hidden">Copy Challenge Link</button>
           <div class="auth">
@@ -62,7 +79,8 @@
         </nav>
 
         <section id="battleTab" class="tab-panel">
-          <section class="practice-panel">
+          <!-- PRACTICE / SETUP (will hide during battle) -->
+          <section class="practice-panel" id="practicePanel">
             <div class="practice-row">
               <div class="practice-group">
                 <label for="subjectSelect">Section</label>
@@ -89,62 +107,87 @@
             <div id="selectionStats" class="selection-stats"></div>
           </section>
 
-          <section class="battle" id="battleArena">
-        <div class="fighter">
-          <div class="label">You</div>
-          <div class="avatar" id="playerAvatar">
-            <div class="avatar-hair"></div>
-            <div class="avatar-face"></div>
-            <div class="avatar-eyes"></div>
-            <div class="avatar-mouth"></div>
-            <div class="avatar-accessory"></div>
-            <div class="avatar-body"></div>
-          </div>
-          <div class="pet-display">
-            <div class="pet" id="playerPet"></div>
-            <span id="playerPetName">Owl</span>
-          </div>
-          <div class="hp-bar">
-            <div id="playerHPFill" class="hp-fill"></div>
-          </div>
-          <div id="playerHPText" class="hp-text">HP 100</div>
-        </div>
+          <!-- COMBAT LAYOUT -->
+          <section class="combat-layout">
+            <!-- LEFT: QUESTIONS + STATUS -->
+            <div class="combat-left">
+              <section class="status">
+                <div>Level: <span id="levelText">1</span></div>
+                <div>XP: <span id="xpText">0</span>/50</div>
+                <div>Spell: <span id="spellText">Spark</span></div>
+                <div>Time: <span id="timeText">0:00</span></div>
+                <div>Streak: <span id="streakText">0</span> days</div>
+                <div>Consistency: <span id="consistencyText">0</span> days</div>
+              </section>
 
-        <div class="vs">VS</div>
-        <div class="sword-slash" id="swordSlash"></div>
+              <section class="question-card">
+                <div id="questionText" class="question">Loading...</div>
+                <div id="answers" class="answers"></div>
+              </section>
 
-        <div class="fighter">
-          <div class="label" id="enemyLabel">Enemy</div>
-          <div class="enemy-visuals">
-            <div class="enemy-icon" id="enemyIcon">🤖</div>
-            <div class="dragon hidden" id="dragon">
-              <div class="dragon-body"></div>
-              <div class="dragon-wing left"></div>
-              <div class="dragon-wing right"></div>
-              <div class="dragon-head"></div>
-              <div class="dragon-fire" id="dragonFire"></div>
+              <section id="message" class="message"></section>
             </div>
-          </div>
-          <div class="hp-bar">
-            <div id="enemyHPFill" class="hp-fill"></div>
-          </div>
-          <div id="enemyHPText" class="hp-text">HP 100</div>
-        </div>
-      </section>
 
-        <section class="status">
-          <div>Level: <span id="levelText">1</span></div>
-          <div>XP: <span id="xpText">0</span>/50</div>
-          <div>Spell: <span id="spellText">Spark</span></div>
-          <div>Time: <span id="timeText">0:00</span></div>
-          <div>Streak: <span id="streakText">0</span> days</div>
-          <div>Consistency: <span id="consistencyText">0</span> days</div>
-        </section>
+            <!-- RIGHT: BATTLE STAGE -->
+            <div class="combat-right">
+              <section class="battle battle-stage" id="battleArena">
+                <div class="battle-mode-label" id="battleModeLabel">Fighting: Bot</div>
+                <div class="fighter">
+                  <div class="label">You</div>
+                  <div class="avatar" id="playerAvatar">
+                    <div class="avatar-hair"></div>
+                    <div class="avatar-face"></div>
+                    <div class="avatar-eyes"></div>
+                    <div class="avatar-mouth"></div>
+                    <div class="avatar-accessory"></div>
+                    <div class="avatar-body"></div>
+                  </div>
+                  <div class="pet-display">
+                    <div class="pet" id="playerPet"></div>
+                    <span id="playerPetName">Owl</span>
+                  </div>
+                  <div class="hp-bar">
+                    <div id="playerHPFill" class="hp-fill"></div>
+                  </div>
+                  <div id="playerHPText" class="hp-text">HP 100</div>
+                </div>
 
-        <section class="question-card">
-          <div id="questionText" class="question">Loading...</div>
-          <div id="answers" class="answers"></div>
-        </section>
+                <div class="vs">VS</div>
+
+                <!-- BIG SLASH VFX -->
+                <div class="sword-slash" id="swordSlash"></div>
+
+                <!-- PROJECTILES VFX LAYER -->
+                <div class="vfx-layer" id="vfxLayer"></div>
+
+                <div class="fighter">
+                  <div class="label" id="enemyLabel">Enemy</div>
+                  <div class="enemy-visuals">
+                    <div class="enemy-icon" id="enemyIcon">🤖</div>
+                    <div class="dragon hidden" id="dragon">
+                      <div class="dragon-body"></div>
+                      <div class="dragon-wing left"></div>
+                      <div class="dragon-wing right"></div>
+                      <div class="dragon-head"></div>
+                      <div class="dragon-fire" id="dragonFire"></div>
+                    </div>
+                  </div>
+                  <div class="hp-bar">
+                    <div id="enemyHPFill" class="hp-fill"></div>
+                  </div>
+                  <div id="enemyHPText" class="hp-text">HP 100</div>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <!-- END SCREEN (unchanged) -->
+          <section id="endScreen" class="end-screen hidden">
+            <h2 id="endTitle">You Win 🎉</h2>
+            <p id="endStats"></p>
+            <button id="copyResultsBtn" class="ghost">Copy Results</button>
+            <button id="playAgainBtn" class="primary">Play Again</button>
+          </section>
 
         <section id="aiPanel" class="ai-helper floating hidden">
           <div id="aiDragHandle" class="ai-header">
@@ -163,13 +206,6 @@
           <div id="aiResponse" class="ai-response"></div>
         </section>
 
-        <section id="message" class="message"></section>
-
-        <section id="endScreen" class="end-screen hidden">
-          <h2 id="endTitle">You Win 🎉</h2>
-          <p id="endStats"></p>
-          <button id="playAgainBtn" class="primary">Play Again</button>
-        </section>
         </section>
 
         <section id="optionsTab" class="tab-panel hidden">
@@ -245,6 +281,11 @@
             <h3>Progress Tracker</h3>
             <div id="progressList"></div>
           </section>
+
+          <section class="achievements-panel">
+            <h3>Achievements</h3>
+            <div id="achievementsList" class="achievements-list"></div>
+          </section>
         </section>
 
         <div id="levelUpPopup" class="levelup hidden">LEVEL UP!</div>
@@ -252,6 +293,13 @@
       </section>
 
     </main>
+
+    <details class="spotify-tab">
+      <summary>Music</summary>
+      <div class="spotify-panel">
+        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/25etUj4Ux0Z3Of0tpwkCjo?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+    </details>
 
     <script src="app.js"></script>
   </body>

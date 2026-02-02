@@ -49,6 +49,11 @@ body {
   background-size: 800px 260px;
   animation-duration: 10s;
 }
+.stars-3 {
+  opacity: 0.35;
+  background-size: 1200px 360px;
+  animation-duration: 16s;
+}
 .planet {
   position: absolute;
   border-radius: 50%;
@@ -76,6 +81,115 @@ body {
   bottom: 14vh;
   right: 18vw;
 }
+.planet-4 {
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle at 30% 30%, #ffe6a7, #ff8fd4 70%);
+  bottom: 30vh;
+  left: 18vw;
+  opacity: 0.85;
+  animation: slowFloat 9s ease-in-out infinite;
+}
+.nebula {
+  position: absolute;
+  width: 360px;
+  height: 220px;
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+}
+.nebula-1 {
+  left: 6vw;
+  top: 10vh;
+  background: radial-gradient(circle, rgba(123,140,255,0.55), transparent 70%);
+  animation: nebulaPulse 8s ease-in-out infinite;
+}
+.nebula-2 {
+  right: 8vw;
+  top: 40vh;
+  background: radial-gradient(circle, rgba(255,143,212,0.5), transparent 70%);
+  animation: nebulaPulse 10s ease-in-out infinite;
+}
+.shooting-star {
+  position: absolute;
+  width: 140px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.9), transparent);
+  opacity: 0.6;
+  transform: rotate(-20deg);
+  animation: shooting 6s linear infinite;
+}
+.shooting-1 { top: 8vh; left: -20vw; animation-delay: 0s; }
+.shooting-2 { top: 28vh; left: -30vw; animation-delay: 2s; }
+.shooting-3 { top: 54vh; left: -25vw; animation-delay: 4s; }
+.comet {
+  position: absolute;
+  width: 220px;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(123,140,255,0.2), transparent);
+  border-radius: 999px;
+  opacity: 0.5;
+  transform: rotate(-12deg);
+  animation: comet 12s linear infinite;
+}
+.comet-1 { top: 12vh; right: -30vw; animation-delay: 1s; }
+.comet-2 { top: 62vh; right: -40vw; animation-delay: 6s; }
+.asteroid {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background: radial-gradient(circle, #8a7bff, #3b2f2f 70%);
+  border-radius: 50%;
+  opacity: 0.7;
+  box-shadow: 0 0 10px rgba(123,140,255,0.35);
+  animation: drift 14s linear infinite;
+}
+.asteroid-1 { top: 18vh; left: 10vw; animation-delay: 0s; }
+.asteroid-2 { top: 46vh; left: 70vw; animation-delay: 4s; }
+.asteroid-3 { top: 70vh; left: 30vw; animation-delay: 8s; }
+.ufo {
+  position: absolute;
+  width: 60px;
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #d6e4ff, #7b8cff);
+  box-shadow: 0 0 14px rgba(123,140,255,0.45);
+  animation: ufoFloat 6s ease-in-out infinite;
+}
+.ufo::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: -8px;
+  width: 36px;
+  height: 16px;
+  border-radius: 999px 999px 8px 8px;
+  background: rgba(255,255,255,0.6);
+}
+.ufo-1 { top: 20vh; right: 20vw; animation-delay: 0s; }
+.ufo-2 { top: 50vh; left: 16vw; animation-delay: 2s; }
+.spaceship {
+  position: absolute;
+  width: 80px;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffd166, #ff8fd4);
+  box-shadow: 0 0 14px rgba(255,143,212,0.45);
+  animation: shipFly 10s linear infinite;
+}
+.spaceship::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 8px;
+  width: 18px;
+  height: 10px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 6px;
+}
+.ship-1 { top: 32vh; left: -30vw; animation-delay: 1s; }
+.ship-2 { top: 68vh; left: -40vw; animation-delay: 5s; }
 .celestial-city {
   position: absolute;
   left: 0;
@@ -93,6 +207,38 @@ body {
 @keyframes twinkle {
   0%, 100% { opacity: 0.7; }
   50% { opacity: 1; }
+}
+@keyframes slowFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes nebulaPulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.08); opacity: 0.5; }
+}
+@keyframes shooting {
+  0% { transform: translateX(0) rotate(-20deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  60% { opacity: 0.2; }
+  100% { transform: translateX(140vw) rotate(-20deg); opacity: 0; }
+}
+@keyframes comet {
+  0% { transform: translateX(0) rotate(-12deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  80% { opacity: 0.2; }
+  100% { transform: translateX(-160vw) rotate(-12deg); opacity: 0; }
+}
+@keyframes drift {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(20vh) rotate(360deg); }
+}
+@keyframes ufoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes shipFly {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(140vw); }
 }
 .container { max-width: 980px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; }
 .topbar {
@@ -149,6 +295,34 @@ body {
 }
 .ghost:hover { transform: translateY(-1px); }
 .ghost:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15); }
+
+.spotify-tab{
+  position: fixed;
+  right: 14px;
+  top: 120px;
+  z-index: 50;
+}
+.spotify-tab summary{
+  list-style: none;
+  cursor: pointer;
+  background: var(--panel);
+  border: 2px solid var(--outline);
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-weight: 700;
+}
+.spotify-tab summary::-webkit-details-marker{ display: none; }
+.spotify-panel{
+  margin-top: 8px;
+  width: min(360px, 80vw);
+  background: var(--panel);
+  border: 2px solid var(--outline);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: var(--shadow);
+}
 .battle {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -421,9 +595,38 @@ body {
 .answer-btn:hover { transform: translateY(-1px); }
 .answer-btn:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(0, 0, 0, 0.12); }
 
-.message { min-height: 28px; margin: 8px 0 4px; text-align: center; font-weight: 700; }
-.message.attack { color: #7cf2b6; }
-.message.ouch { color: #ff8a8a; }
+.message {
+  min-height: 28px;
+  margin: 8px 0 4px;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.message.attack {
+  color: #7cf2b6;
+  animation: popGlow 0.35s ease-out;
+  text-shadow: 0 0 12px rgba(124, 242, 182, 0.6);
+}
+.message.ouch {
+  color: #ff8a8a;
+  animation: ouchShake 0.45s ease-out;
+  text-shadow: 0 0 14px rgba(255, 90, 90, 0.65);
+}
+
+@keyframes popGlow {
+  0% { transform: scale(0.9); opacity: 0.4; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes ouchShake {
+  0% { transform: scale(1) translateX(0); }
+  20% { transform: scale(1.08) translateX(-6px); }
+  40% { transform: scale(1.08) translateX(6px); }
+  60% { transform: scale(1.06) translateX(-4px); }
+  80% { transform: scale(1.04) translateX(4px); }
+  100% { transform: scale(1); translateX(0); }
+}
 
 .end-screen {
   background: var(--panel);
@@ -547,8 +750,32 @@ body {
 .domain-section { margin-top: 20px; }
 .domain-section h2 { margin: 0 0 10px; font-size: 20px; }
 .domain-list { display: grid; gap: 10px; }
-.domain-card {
+.subject-group {
+  background: var(--panel);
+  border: 3px solid var(--outline);
+  border-radius: 16px;
+  padding: 8px 10px;
+  box-shadow: var(--shadow);
+}
+.subject-group summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--ink);
+  padding: 6px 8px;
+}
+.subject-group summary::-webkit-details-marker { display: none; }
+.subject-group summary::after {
+  content: "▾";
+  float: right;
+  color: var(--accent);
+}
+.subject-group[open] summary::after { content: "▴"; }
+.subject-group .domain-card {
+  margin-top: 8px;
   background: #1b2552;
+}
+.domain-card {
   border: 3px solid var(--outline);
   border-radius: 14px;
   padding: 12px;
@@ -667,6 +894,47 @@ body {
 }
 .progress-item:last-child { border-bottom: none; }
 
+.achievements-panel {
+  margin-top: 16px;
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 12px;
+  border: 3px solid var(--outline);
+  box-shadow: var(--shadow);
+}
+.achievements-panel h3 { margin: 0 0 10px; }
+.achievements-list {
+  display: grid;
+  gap: 8px;
+}
+.achievement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #1b2552;
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-size: 13px;
+  box-shadow: var(--shadow);
+}
+.achievement .title { font-weight: 700; }
+.achievement .desc { color: #cdd6ff; font-size: 12px; }
+.achievement.locked {
+  opacity: 0.5;
+  filter: grayscale(0.4);
+}
+.achievement .badge {
+  background: linear-gradient(180deg, #a58bff, #7b66ff);
+  color: #fff;
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 
 .shake { animation: shake 0.25s; }
 @keyframes shake {
@@ -784,4 +1052,183 @@ body {
   position: fixed;
   inset: 0;
   pointer-events: none;
+}
+
+/* ========= COMBAT LAYOUT ========= */
+.combat-layout{
+  display:grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap:16px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.combat-left{
+  display:flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.combat-right{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+
+.battle-stage{
+  width:100%;
+  min-height: 320px;
+}
+
+.battle-mode-label{
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel);
+  border: 2px solid var(--outline);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+/* Hide “options/config” during battle */
+body.in-battle #practicePanel { display:none !important; }
+body.in-battle .tab-bar { display:none !important; }
+
+/* Make question panel feel like a command console */
+.question-card{
+  position: relative;
+}
+
+.answers .answer-btn{
+  position: relative;
+  overflow:hidden;
+}
+.answers .answer-btn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.18), transparent 55%);
+  opacity:0;
+  transition: opacity .12s ease;
+}
+.answers .answer-btn:hover::after{ opacity:1; }
+
+/* ========= IMPACT / FLASH ========= */
+body.flash {
+  filter: brightness(1.15) saturate(1.08);
+}
+
+/* Stronger shake */
+.battle.shake { animation: shake 0.25s linear; }
+.fighter.shake { animation: shake 0.25s linear; }
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-7px); }
+  50% { transform: translateX(7px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+/* ========= SWORD SLASH VFX ========= */
+.sword-slash{
+  position:absolute;
+  inset:-10px;
+  pointer-events:none;
+  opacity:0;
+  background:
+    linear-gradient(120deg,
+      transparent 43%,
+      rgba(255,255,255,0.95) 50%,
+      transparent 57%);
+  mix-blend-mode: screen;
+  filter: blur(0.5px);
+}
+
+.battle.sword-attack .sword-slash{
+  animation: slash 0.35s ease-out;
+}
+
+@keyframes slash{
+  from { opacity:0; transform: translateX(-45%) rotate(-10deg) scale(1.05); }
+  30% { opacity:1; }
+  to { opacity:0; transform: translateX(45%) rotate(10deg) scale(1.08); }
+}
+
+/* ========= PROJECTILES ========= */
+.vfx-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow: visible;
+}
+
+.projectile{
+  position:absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.55));
+  opacity: 0.95;
+}
+
+.projectile.spark{
+  background: radial-gradient(circle, #ffffff 0%, #7b8cff 55%, transparent 70%);
+}
+.projectile.fireball{
+  background: radial-gradient(circle, #fff1a6 0%, #ff5a5a 50%, transparent 72%);
+}
+.projectile.ice{
+  background: radial-gradient(circle, #e9fbff 0%, #59b7ff 55%, transparent 72%);
+}
+
+.projectile.fly{
+  animation: fly 0.38s ease-in forwards;
+}
+
+@keyframes fly{
+  from { transform: translate(0,0) scale(1); opacity: 1; }
+  70% { opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(1.3); opacity: 0; }
+}
+
+/* ========= DRAGON FIRE ========= */
+.dragon.fire .dragon-fire{
+  animation: firebreath 0.6s ease-out;
+}
+
+@keyframes firebreath{
+  from { opacity:0; transform: scaleX(0); }
+  30% { opacity:1; transform: scaleX(1); }
+  to { opacity:0; transform: scaleX(1.35); }
+}
+
+/* ========= HP BAR FEEDBACK ========= */
+.hp-fill.hp-hit{
+  animation: hpHit 0.15s ease-in-out;
+}
+.hp-fill.hp-heal{
+  animation: hpHeal 0.15s ease-in-out;
+}
+@keyframes hpHit{
+  from { box-shadow: 0 0 12px rgba(255,90,90,0.9); filter: brightness(1.15); }
+  to { box-shadow: none; filter: none; }
+}
+@keyframes hpHeal{
+  from { box-shadow: 0 0 12px rgba(120,255,180,0.9); filter: brightness(1.2); }
+  to { box-shadow: none; filter: none; }
+}
+
+/* ========= MOBILE LAYOUT ========= */
+@media (max-width: 820px) {
+  .combat-layout{
+    grid-template-columns: 1fr;
+  }
+  .combat-right{
+    justify-content: stretch;
+  }
 }
